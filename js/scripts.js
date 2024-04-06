@@ -1,5 +1,7 @@
 'use strict';
 
+
+
 window.addEventListener('DOMContentLoaded', event => {
 
     // Navbar shrink function
@@ -48,37 +50,44 @@ window.addEventListener('DOMContentLoaded', event => {
 
 const btnSendEmail = document.querySelector('#submitButton');
 
-const userData = {
-    email: "despina_nasgodineanu@yahoo.com",
-    password: "kevin1234",
+const sendEmail = function() {
+  const messageForm = document.querySelector('.textarea_wrapper #message');
+  const email = document.querySelector('#email');
+  const fullName = document.querySelector('#name');
+
+  const emailData = {
+    to: "despina_nasgodineanu@yahoo.com",
+    subject: `Portofoliu - ${email.value}` ,
+    text:` Name : ${fullName.value} ,
+           Message:${messageForm.value}`,
   };
-  
+
   const requestOptions = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(userData),
+    body: JSON.stringify(emailData),
   };
+  
+  fetch(
+    "https://bankist-api-image-o42rrddu2a-od.a.run.app/email/send",
+    requestOptions
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Email was sent successfully:", data);
+      // Store the access token securely, such as in localStorage or sessionStorage
+    })
+    .catch((error) => {
+      console.error("There was a problem with the request:", error.message);
+    });
+}
 
-btnSendEmail.addEventListener('click', function(){
-      fetch(
-        "https://bankist-api-image-o42rrddu2a-od.a.run.app/user/login",
-        requestOptions
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Login successful. Access token:", data);
-          // Store the access token securely, such as in localStorage or sessionStorage
-        })
-        .catch((error) => {
-          console.error("There was a problem with the request:", error);
-        });
-      
-})
+btnSendEmail.addEventListener('click', sendEmail)
 
